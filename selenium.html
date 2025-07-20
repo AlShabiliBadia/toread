@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Selenium Roadmap: Python & PyTest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .stage-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .stage-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .nav-link.active {
+            background-color: #0ea5e9; /* sky-500 */
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside class="w-full md:w-64 bg-white md:border-r border-b md:border-b-0 border-slate-200 sticky top-0 md:h-screen z-20">
+            <div class="p-4 border-b border-slate-200">
+                <h1 class="text-xl font-bold text-sky-600">Selenium Roadmap</h1>
+                <p class="text-sm text-slate-500">Python & PyTest Edition</p>
+            </div>
+            <nav id="navigation" class="p-2 flex md:flex-col overflow-x-auto">
+                </nav>
+        </aside>
+
+        <main class="flex-1 p-4 sm:p-6 lg:p-8">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Your Learning Journey</h2>
+                <p class="mt-2 text-lg text-slate-600">Track your progress from beginner to pro. Check off topics as you master them.</p>
+            </header>
+            
+            <section id="dashboard" class="mb-12 p-6 bg-white rounded-2xl shadow-sm">
+                 <h3 class="text-xl font-bold text-center mb-4">Overall Progress</h3>
+                <div class="chart-container relative w-full max-w-xs mx-auto h-64">
+                    <canvas id="progressChart"></canvas>
+                </div>
+                <p id="progressText" class="text-center mt-4 text-slate-600 font-medium"></p>
+            </section>
+
+            <div id="stages-container" class="space-y-12">
+                </div>
+            
+        </main>
+    </div>
+
+    <script>
+        const roadmapData = 
+            [
+    {
+        id: "stage-1",
+        title: "Stage 1: The Foundation",
+        subtitle: "Environment & Core Concepts",
+        items: [
+            { topic: "Selenium Components", type: "Concept", description: "Learn the key parts: WebDriver for coding, IDE for recording, and Grid for parallel testing." },
+            { topic: "Virtual Environments (venv)", type: "CRITICAL CONCEPT", description: "Isolate project dependencies using venv. A crucial best practice for any Python project." },
+            { topic: "Environment Setup", type: "Practical Skill", description: "Install Python, an IDE like VS Code, and initialize your project with a venv." },
+            { topic: "Install Libraries", type: "Practical Skill", description: "Use 'pip' to install essential packages: selenium and pytest." },
+            { topic: "SeleniumManager", type: "Concept", description: "Understand how modern Selenium (4.6+) automatically manages browser drivers for you, replacing the need for webdriver-manager." }
+        ]
+    },
+    {
+        id: "stage-2",
+        title: "Stage 2: WebDriver Fundamentals",
+        subtitle: "Browser & Element Interaction",
+        items: [
+            { topic: "Browser Navigation", type: "Memorize", description: "Master the basics: driver.get(), .current_url, .title, .back(), .forward(), and .refresh()." },
+            { topic: "Locator Strategies (By)", type: "Master This!", description: "Learn all methods to find elements: ID, Name, Class Name, Tag Name, Link Text, CSS Selector, and XPath." },
+            { topic: "Finding Elements", type: "Master This!", description: "Use driver.find_element() vs driver.find_elements(). Understand what happens when elements are found or not found." },
+            { topic: "Element Interaction", type: "Memorize", description: "Perform user actions on elements: .click(), .send_keys(), and .clear()." },
+            { topic: "Fetching Element Details", type: "Memorize", description: "Get data from elements using .text, .get_attribute('value'), .size, and .location." },
+            { topic: "Element State Checks", type: "Memorize", description: "Verify element status with .is_displayed(), .is_enabled(), and .is_selected(). Essential for assertions." },
+            { topic: "driver.close() vs driver.quit()", type: "CRITICAL CONCEPT", description: "Close() kills one tab/window; quit() ends the entire WebDriver session. Using the wrong one causes issues." }
+        ]
+    },
+    {
+        id: "stage-3",
+        title: "Stage 3: Synchronization & Robustness",
+        subtitle: "Making Your Tests Stable",
+        items: [
+            { topic: "The Problem of Race Conditions", type: "Concept", description: "Understand why scripts fail: they are often faster than the website they are testing." },
+            { topic: "Explicit Waits (WebDriverWait)", type: "Master This!", description: "The best practice. It pauses the script FOR A CONDITION, not for a fixed time." },
+            { topic: "ExpectedConditions (EC)", type: "Master This!", description: "Combine with WebDriverWait to wait for specific events, e.g., element_to_be_clickable." },
+            { topic: "Selenium Exception Handling", type: "Master This!", description: "Learn to catch and handle common errors like NoSuchElementException, TimeoutException, and StaleElementReferenceException." },
+            { topic: "Implicit Waits (And Why to Avoid)", type: "Concept", description: "A global wait that can hide performance issues and conflict with explicit waits. Understand but avoid." }
+        ]
+    },
+    {
+        id: "stage-4",
+        title: "Stage 4: Advanced Interactions",
+        subtitle: "Handling Complex Web Elements",
+        items: [
+            { topic: "Dropdowns (Select Class)", type: "Memorize", description: "Use the built-in Select class to easily handle HTML <select> dropdowns." },
+            { topic: "ActionChains", type: "Memorize", description: "For complex user gestures like mouse-over (hover), right-clicks, and drag-and-drop." },
+            { topic: "Alerts, Frames, and Windows", type: "Practical Skill", description: "Learn to switch the driver's focus between pop-ups, iframes, and multiple browser tabs/windows." },
+            { topic: "Executing JavaScript", type: "Practical Skill", description: "A powerful 'escape hatch' to perform actions (like clicks or scrolls) not natively supported by Selenium." },
+            { topic: "Cookie Management", type: "Practical Skill", description: "Interact with browser cookies to manage sessions or test specific user states." }
+        ]
+    },
+    {
+        id: "stage-5",
+        title: "Stage 5: Professional Framework Design",
+        subtitle: "Building Reusable & Maintainable Tests",
+        items: [
+            { topic: "PyTest Basics (Discovery & Assert)", type: "Master This!", description: "Learn how PyTest finds tests (test_*.py) and use the simple 'assert' keyword for powerful validations." },
+            { topic: "PyTest Fixtures (@pytest.fixture)", type: "Master This!", description: "Master reusable setup/teardown functions (like opening/closing the browser) for clean tests." },
+            { topic: "Advanced Fixtures & conftest.py", type: "Master This!", description: "Organize shared fixtures in conftest.py and understand different scopes (function, class, module, session)." },
+            { topic: "Page Object Model (POM)", type: "CRITICAL CONCEPT", description: "The most important design pattern for creating scalable and maintainable test suites by separating locators from tests." },
+            { topic: "Data-Driven Testing (@pytest.mark.parametrize)", type: "Concept", description: "Run the same test with multiple sets of data to improve test coverage efficiently." }
+        ]
+    },
+    {
+        id: "stage-6",
+        title: "Stage 6: Scaling & CI/CD",
+        subtitle: "Running Tests at Scale",
+        items: [
+            { topic: "Headless Execution", type: "Practical Skill", description: "Configure and run your tests in a headless browser (no UI) using ChromeOptions for faster execution in pipelines." },
+            { topic: "Logging Implementation", type: "Practical Skill", description: "Integrate Python's logging module to create detailed and readable test execution logs instead of using print()." },
+            { topic: "HTML Reporting (pytest-html)", type: "Practical Skill", description: "Generate clear, professional test reports with screenshots on failure to share results with your team." },
+            { topic: "Local Parallel Testing (pytest-xdist)", type: "Practical Skill", description: "Use pytest-xdist to run tests in parallel on your local machine—a great first step before Selenium Grid." },
+            { topic: "Selenium Grid for Remote Execution", type: "Concept", description: "Understand how Grid runs tests across many machines/browsers at once to drastically reduce execution time." },
+            { topic: "CI/CD Integration (e.g., GitHub Actions)", type: "Concept", description: "Learn how to automate your test runs whenever new code is pushed, making testing part of the development lifecycle." }
+        ]
+    }
+];
+
+        let progressChart;
+        let progressState = {};
+
+        function getTypePill(type) {
+            const baseClasses = "text-xs font-semibold px-2 py-0.5 rounded-full";
+            switch (type) {
+                case "Memorize": return `${baseClasses} bg-blue-100 text-blue-800`;
+                case "Master This!": return `${baseClasses} bg-green-100 text-green-800`;
+                case "CRITICAL CONCEPT": return `${baseClasses} bg-red-100 text-red-800`;
+                case "Concept": return `${baseClasses} bg-indigo-100 text-indigo-800`;
+                case "Practical Skill": return `${baseClasses} bg-amber-100 text-amber-800`;
+                default: return `${baseClasses} bg-slate-100 text-slate-800`;
+            }
+        }
+        
+        function renderContent() {
+            const navContainer = document.getElementById('navigation');
+            const stagesContainer = document.getElementById('stages-container');
+            navContainer.innerHTML = '';
+            stagesContainer.innerHTML = '';
+            
+            let totalItems = 0;
+
+            roadmapData.forEach((stage, stageIndex) => {
+                totalItems += stage.items.length;
+
+                const navLink = document.createElement('a');
+                navLink.href = `#${stage.id}`;
+                navLink.textContent = stage.title;
+                navLink.className = 'nav-link text-slate-600 hover:bg-sky-100 px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap';
+                navContainer.appendChild(navLink);
+
+                const section = document.createElement('section');
+                section.id = stage.id;
+                section.className = 'stage-card bg-white p-6 rounded-2xl shadow-sm';
+
+                section.innerHTML = `
+                    <h3 class="text-2xl font-bold tracking-tight">${stage.title}</h3>
+                    <p class="text-md text-slate-500 mt-1 mb-6">${stage.subtitle}</p>
+                    <div class="space-y-3">
+                        ${stage.items.map((item, itemIndex) => `
+                            <label for="${stage.id}-${itemIndex}" class="flex items-start p-3 rounded-lg hover:bg-slate-50 cursor-pointer border border-slate-200">
+                                <input type="checkbox" id="${stage.id}-${itemIndex}" data-stage="${stageIndex}" data-item="${itemIndex}" class="h-5 w-5 mt-0.5 rounded border-gray-300 text-sky-600 focus:ring-sky-500 flex-shrink-0">
+                                <div class="ml-4 flex-1">
+                                    <span class="text-slate-700 font-medium">${item.topic}</span>
+                                    <p class="text-sm text-slate-500 mt-1">${item.description}</p>
+                                </div>
+                                <span class="${getTypePill(item.type)} ml-4 flex-shrink-0">${item.type}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                stagesContainer.appendChild(section);
+            });
+            
+            return totalItems;
+        }
+
+        function updateProgress() {
+            let completed = 0;
+            let total = 0;
+
+            roadmapData.forEach((stage, stageIndex) => {
+                stage.items.forEach((item, itemIndex) => {
+                    total++;
+                    if (progressState[`${stageIndex}-${itemIndex}`]) {
+                        completed++;
+                    }
+                });
+            });
+
+            const percentage = total > 0 ? (completed / total) * 100 : 0;
+
+            progressChart.data.datasets[0].data = [completed, total - completed];
+            progressChart.options.plugins.tooltip.callbacks.label = function(context) {
+                return `${context.label}: ${context.raw}`;
+            };
+            progressChart.update();
+            
+            document.getElementById('progressText').textContent = `${completed} of ${total} topics completed (${Math.round(percentage)}%)`;
+        }
+
+        function initializeChart(totalItems) {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            progressChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Remaining'],
+                    datasets: [{
+                        data: [0, totalItems],
+                        backgroundColor: [
+                            '#0ea5e9', // sky-500
+                            '#e2e8f0'  // slate-200
+                        ],
+                        borderColor: '#f8fafc', // slate-50
+                        borderWidth: 4,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: '#1e293b', // slate-800
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            padding: 10,
+                            cornerRadius: 6
+                        }
+                    }
+                }
+            });
+        }
+        
+        function handleScroll() {
+            const scrollPosition = window.scrollY;
+            const sections = document.querySelectorAll('section[id^="stage-"]');
+            const navLinks = document.querySelectorAll('#navigation a');
+            
+            sections.forEach(section => {
+                if (section.offsetTop <= scrollPosition + 150 && section.offsetTop + section.offsetHeight > scrollPosition + 150) {
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${section.id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const totalItems = renderContent();
+            initializeChart(totalItems);
+
+            const savedProgress = JSON.parse(localStorage.getItem('seleniumProgress')) || {};
+            progressState = savedProgress;
+
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                const key = `${checkbox.dataset.stage}-${checkbox.dataset.item}`;
+                if (progressState[key]) {
+                    checkbox.checked = true;
+                }
+
+                checkbox.addEventListener('change', (e) => {
+                    const key = `${e.target.dataset.stage}-${e.target.dataset.item}`;
+                    progressState[key] = e.target.checked;
+                    localStorage.setItem('seleniumProgress', JSON.stringify(progressState));
+                    updateProgress();
+                });
+            });
+
+            updateProgress();
+            
+            handleScroll();
+            window.addEventListener('scroll', handleScroll);
+        });
+
+    </script>
+
+</body>
+</html>
